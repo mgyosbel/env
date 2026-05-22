@@ -124,6 +124,7 @@ alias vim=nvim
 alias ts='$HOME/.local/bin/tmux-sessionizer'
 #alias pip=pip3
 alias cl="clear -x"
+alias bat=batcat
 source /home/mgyosbel/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 source /home/mgyosbel/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
