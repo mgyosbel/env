@@ -1,10 +1,12 @@
-# Homebrew PATH — must come FIRST
-eval "$(/opt/homebrew/bin/brew shellenv)"
+# Homebrew PATH — must come FIRST (only if brew is installed; macOS or Linuxbrew)
+for _brew in /opt/homebrew/bin/brew /usr/local/bin/brew /home/linuxbrew/.linuxbrew/bin/brew; do
+  if [ -x "$_brew" ]; then eval "$("$_brew" shellenv)"; break; fi
+done
+unset _brew
 
-# Setting PATH for Python 3.13
-# The original version is saved in .zprofile.pysave
-PATH="/Library/Frameworks/Python.framework/Versions/3.13/bin:${PATH}"
-export PATH
+# Setting PATH for Python 3.13 (macOS framework path; only if present)
+[ -d "/Library/Frameworks/Python.framework/Versions/3.13/bin" ] && \
+  export PATH="/Library/Frameworks/Python.framework/Versions/3.13/bin:${PATH}"
 
 
 termwidth="$(tput cols)"
@@ -19,7 +21,21 @@ left_align() {
 }
 
 left_align 6 "Let's rock and roll baby!"
-figlet -w ${termwidth} -f slant KYUUBI | lolcat
+
+# Banner: use figlet if available, preferring the "slant" font but falling back
+# to any installed font. Colorize with lolcat only when it's installed.
+if command -v figlet >/dev/null 2>&1; then
+  _fig_font=standard
+  for _f in slant future standard mono12 smblock; do
+    if figlet -f "$_f" "" >/dev/null 2>&1; then _fig_font="$_f"; break; fi
+  done
+  if command -v lolcat >/dev/null 2>&1; then
+    figlet -w "${termwidth}" -f "$_fig_font" KYUUBI | lolcat
+  else
+    figlet -w "${termwidth}" -f "$_fig_font" KYUUBI
+  fi
+  unset _fig_font _f
+fi
 # NOTE: Do NOT source ~/.zshrc here. Interactive login shells already read
 # ~/.zshrc automatically AFTER ~/.zprofile, so sourcing it here made the whole
 # config run twice (doubling startup time). Removed intentionally.

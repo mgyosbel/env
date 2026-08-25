@@ -1,6 +1,5 @@
 # If you come from bash you might have to change your $PATH.
 # export PATH=$HOME/bin:$HOME/.local/bin:/usr/local/bin:$PATH
-export PATH=/opt/homebrew/bin:$PATH
 export PATH=$HOME/bin:$HOME/.cargo/bin:/usr/local/bin:$HOME/.local/bin:/usr/bin:$HOME/dev/go/bin:$PATH
 export PATH=$PATH:/opt/nvim-linux-x86_64/bin
 export K9S_CONFIG_DIR=$HOME/.config/k9s
@@ -39,7 +38,11 @@ _load_cached() {
   fi
   source "$f" 2>/dev/null
 }
-_load_cached brew /opt/homebrew/bin/brew shellenv
+# Load Homebrew env (macOS or Linuxbrew) only if brew is installed.
+for _brew in /opt/homebrew/bin/brew /usr/local/bin/brew /home/linuxbrew/.linuxbrew/bin/brew; do
+  if [ -x "$_brew" ]; then _load_cached brew "$_brew" shellenv; break; fi
+done
+unset _brew
 # ---------------------------------------------------------------------------
 # Path to your Oh My Zsh installation.
 export ZSH="$HOME/.oh-my-zsh"
@@ -124,7 +127,8 @@ COMPLETION_WAITING_DOTS="true"
 # Would you like to use another custom folder than $ZSH/custom?
 # ZSH_CUSTOM=/path/to/new-custom-folder
 
-source /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+# zsh-syntax-highlighting is loaded via the oh-my-zsh plugins list below.
+# (The old hardcoded Homebrew path was macOS-only and has been removed.)
 
 ZSH_DISABLE_COMPFIX=true        # skip slow compaudit
 
@@ -184,6 +188,8 @@ alias vim=nvim
 alias tms='$HOME/.local/bin/tmux-sessionizer'
 alias pip=pip3
 alias cl="clear -x"
+# Debian/Ubuntu ship `bat` as `batcat` (name clash). Alias it if only batcat exists.
+command -v bat >/dev/null 2>&1 || { command -v batcat >/dev/null 2>&1 && alias bat=batcat; }
 # source $HOME/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
 
 # kubie completions are loaded in the completions block above (after compinit).
@@ -239,4 +245,5 @@ if [ -f '/Users/yosbel.martinez/obsidian-vault/google-cloud-sdk/path.zsh.inc' ];
 if [ -f '/Users/yosbel.martinez/obsidian-vault/google-cloud-sdk/completion.zsh.inc' ]; then . '/Users/yosbel.martinez/obsidian-vault/google-cloud-sdk/completion.zsh.inc'; fi
 
 autoload -U +X bashcompinit && bashcompinit
-complete -o nospace -C /opt/homebrew/bin/terraform terraform
+# terraform completion, only if terraform is on PATH
+command -v terraform >/dev/null 2>&1 && complete -o nospace -C "$(command -v terraform)" terraform
