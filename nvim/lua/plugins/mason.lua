@@ -9,6 +9,7 @@ return {
     ensure_installed = {
       "stylua",
       "shfmt",
+      "tflint",
     },
   },
   ---@param opts MasonSettings | {ensure_installed: string[]}
