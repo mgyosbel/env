@@ -7,6 +7,8 @@ pull-config:
 	cp tmux/tmux-dev-dir ~/.local/bin/
 	mkdir -p ~/.config/nvim
 	rsync -av --progress ./nvim/ ~/.config/nvim/
+	rsync -av --progress ./zsh/.zshrc ~/.zshrc
+	rsync -av --progress ./zsh/.zprofile ~/.zprofile
 	echo "Remember to install your tmux plugins with <leader>I"
 
 push-config:
@@ -14,6 +16,8 @@ push-config:
 	rsync -av --progress ~/.config/nvim/ ./nvim/
 	cp ~/.local/bin/tmux-sessionizer ./tmux/
 	cp ~/.local/bin/tmux-dev-dir ./tmux/
+	rsync -av --progress ~/.zshrc ./zsh/.zshrc
+	rsync -av --progress ~/.zprofile ./zsh/.zprofile
 	@if git diff --quiet && git diff --cached --quiet; then \
 		echo "⚠️  No hay cambios para hacer commit."; \
 	else \
