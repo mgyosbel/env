@@ -9,6 +9,8 @@ pull-config:
 	rsync -av --progress ./nvim/ ~/.config/nvim/
 	rsync -av --progress ./zsh/.zshrc ~/.zshrc
 	rsync -av --progress ./zsh/.zprofile ~/.zprofile
+	mkdir -p ~/.config
+	rsync -av --progress ./starship/starship.toml ~/.config/starship.toml
 	echo "Remember to install your tmux plugins with <leader>I"
 
 push-config:
@@ -18,6 +20,7 @@ push-config:
 	cp ~/.local/bin/tmux-dev-dir ./tmux/
 	rsync -av --progress ~/.zshrc ./zsh/.zshrc
 	rsync -av --progress ~/.zprofile ./zsh/.zprofile
+	rsync -av --progress ~/.config/starship.toml ./starship/starship.toml
 	@if git diff --quiet && git diff --cached --quiet; then \
 		echo "⚠️  No hay cambios para hacer commit."; \
 	else \
